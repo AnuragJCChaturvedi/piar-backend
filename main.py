@@ -100,14 +100,10 @@ async def upload_files(audio: UploadFile = File(...), images: Optional[List[Uplo
         await analyze_images(audio_video_uuid, image_to_text_content)
 
         # Combine analysis and send for brief analysis
-        await combine_transcribed_data(audio_video_uuid)
+        result = await combine_transcribed_data(audio_video_uuid)
 
         # Return success response with paths
-        return JSONResponse(content={
-            "message": "Files received and processed successfully",
-            "audio_path": str(audio_path),
-            "image_paths": image_paths,
-        })
+        return JSONResponse(content={"result": result})
 
     except Exception as e:
         print("An error occurred:", e)
@@ -179,8 +175,8 @@ async def combine_transcribed_data(uuid):
         {
             "role": "user",
             "content": (
-                "Use the combined data below to generate a JSON output only. "
-                "Ensure the JSON has fields 'Name', 'Occupation', and 'Summary'. Avoid extra information or explanations."
+                "Use the combined data below to generate a valid JSON string output only. "
+                "Ensure the JSON string has fields 'Name', 'Occupation', and 'Summary'. Avoid extra information or explanations."
             ),
         },
         {
@@ -198,7 +194,7 @@ async def combine_transcribed_data(uuid):
 
     # Print or handle JSON response content directly
     if response:
-        print("GPT-4o Response:", response.choices[0].message.content)
+        return response.choices[0].message.content
     else:
-        print("GPT-4o analysis failed.")
+        return "GPT-4o analysis failed."
 
