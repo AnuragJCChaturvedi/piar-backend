@@ -1,0 +1,13 @@
+.env
+
+piar-env
+
+__pycache__/
+
+./input/audio/*
+
+./input/images/*
+
+./output/audio/*
+
+./output/images/*
